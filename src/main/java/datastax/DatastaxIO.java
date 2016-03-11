@@ -41,8 +41,7 @@ public class DatastaxIO {
         }
 
         cluster = Cluster.builder()
-                //.withLoadBalancingPolicy(new DCAwareRoundRobinPolicy("datacenter1"))
-                .withLoadBalancingPolicy(new TokenAwarePolicy(new DCAwareRoundRobinPolicy("datacenter1")))
+                .withLoadBalancingPolicy(new TokenAwarePolicy(DCAwareRoundRobinPolicy.builder().withLocalDc("datacenter1").build()))
                 .withPoolingOptions(getPoolingOptions())
                 .addContactPointsWithPorts(contactPoints)
                 .build();

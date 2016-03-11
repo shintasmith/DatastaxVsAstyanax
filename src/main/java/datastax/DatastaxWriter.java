@@ -58,14 +58,14 @@ public class DatastaxWriter {
 
     }
 
-    public static void writePrepareToDB(){
-        Session session = DatastaxIO.getSession();
-        final Timer.Context actualWriteCtx = batchWriteDurationTimer.time();
-        long datastaxStartTime = System.currentTimeMillis();
-        session.executeAsync(preparedStatement.bind("15581.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met." + (new Random().nextInt(20 - 1) + 1), System.currentTimeMillis(), DatastaxSerializer.DoubleSerializer.serialize(new Random().nextDouble())));
-        writeMeter.mark();
-        actualWriteCtx.stop();
-        long datastaxEndTime = System.currentTimeMillis();
-        System.out.println("Datastax Write Execution Time " + (datastaxEndTime - datastaxStartTime));
-    }
+//    public static void writePrepareToDB(){
+//        Session session = DatastaxIO.getSession();
+//        final Timer.Context actualWriteCtx = batchWriteDurationTimer.time();
+//        long datastaxStartTime = System.currentTimeMillis();
+//        session.executeAsync(preparedStatement.bind("15581.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met." + (new Random().nextInt(20 - 1) + 1), System.currentTimeMillis(), DatastaxSerializer.DoubleSerializer.serialize(new Random().nextDouble())));
+//        writeMeter.mark();
+//        actualWriteCtx.stop();
+//        long datastaxEndTime = System.currentTimeMillis();
+//        System.out.println("Datastax Write Execution Time " + (datastaxEndTime - datastaxStartTime));
+//    }
 }

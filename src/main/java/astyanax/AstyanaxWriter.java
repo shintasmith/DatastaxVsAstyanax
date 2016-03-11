@@ -20,18 +20,19 @@ import java.util.concurrent.Future;
 public class AstyanaxWriter {
     private final static Timer batchWriteDurationTimer = Metrics.timer(AstyanaxWriter.class, "Astyanax Batch Write Duration");
     private final static Meter writeMeter = Metrics.meter(AstyanaxWriter.class, "Astyanax Write Operations");
-    private static int ttl = 172800; //Two days
+    private static int ttl = 172800; // 2 days
+
     public static void writeBatchToDB(int size) {
         MutationBatch mb = AstyanaxIO.getKeyspace().prepareMutationBatch();
-        for (int i=size; i<(2*size);i++) {
-            String metricName = "15581.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met."+ i;
+        for (int i=0; i<size; i++) {
+            String metricName = "astyanax.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met."+ i;
             mb.withRow(new ColumnFamily("metrics_full", StringSerializer.get(),LongSerializer.get()), metricName)
-                    .putColumn(System.currentTimeMillis(), new Random().nextDouble(), DoubleSerializer.get(), ttl);
+                                .putColumn(System.currentTimeMillis(), new Random().nextDouble(), DoubleSerializer.get(), ttl);
         }
         try {
             final Timer.Context actualWriteCtx = batchWriteDurationTimer.time();
             long astyanaxStartTime = System.currentTimeMillis();
-            //mb.execute();
+
             Future future = mb.executeAsync();
             boolean listen = true;
             while(listen) {
@@ -43,7 +44,6 @@ public class AstyanaxWriter {
                     listen=false;
                 }
             }
-
         }
         catch (ConnectionException e){
             e.printStackTrace();
@@ -53,7 +53,7 @@ public class AstyanaxWriter {
     public static void writeToDB() {
         MutationBatch mb = AstyanaxIO.getKeyspace().prepareMutationBatch();
 
-        String metricName = "15581.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met."+ new Random().nextInt();
+        String metricName = "astyanax.int.abcdefg.hijklmnop.qrstuvw.xyz.ABCDEFG.HIJKLMNOP.QRSTUVW.XYZ.abcdefg.hijklmnop.qrstuvw.xyz.met."+ new Random().nextInt();
         mb.withRow(new ColumnFamily("metrics_full", new StringSerializer(), new LongSerializer()), metricName)
                 .putColumn(System.currentTimeMillis(), new Random().nextDouble(), null);
 

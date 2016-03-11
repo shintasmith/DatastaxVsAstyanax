@@ -18,6 +18,8 @@ public class Service {
         for(int i=0; i<Constants.NUMBER_OF_READ_THREADS;i++){
             if(serviceType.equalsIgnoreCase("datastax"))
                 pool.execute(new DatastaxReadThread());
+            else if ( serviceType.equalsIgnoreCase("datastax-read-astyanax"))
+                pool.execute(new DatastaxReadFromAstyanaxThread());
             else if(serviceType.equalsIgnoreCase("astyanax"))
                 pool.execute(new AstyanaxReadThread());
             else {
@@ -54,6 +56,15 @@ public class Service {
         }
     }
 
+    private static class DatastaxReadFromAstyanaxThread implements Runnable{
+        @Override
+        public void run() {
+            while(true) {
+                DatastaxReader.readAstyanaxMetrics(Constants.READ_BATCH_SIZE);
+            }
+        }
+    }
+
     private static class AstyanaxReadThread implements Runnable{
         @Override
         public void run() {
@@ -62,6 +73,7 @@ public class Service {
             }
         }
     }
+
 
     private static class DatastaxWriteThread implements Runnable{
         @Override
@@ -81,7 +93,14 @@ public class Service {
         }
     }
     public static void main(String[] args){
-        if(args[1].equalsIgnoreCase("write"))
+        if ( args.length != 2 ) {
+            System.out.println("Missing arguments");
+            System.out.printf("Usage: %s [astyanax|datastax|datastax-read-asytanax] [read|write]", Service.class.getSimpleName());
+        }
+
+        if ( args[0].equals("datastax-read-astyanax") ) {
+            startQueryServices(args[0]);
+        } else if(args[1].equalsIgnoreCase("write"))
             startIngestServices(args[0]);
         else if(args[1].equalsIgnoreCase("read"))
             startQueryServices(args[0]);
